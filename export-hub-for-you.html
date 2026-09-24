@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Export Hub For You — Thrift Clothing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --denim:#2B3A55;
+    --denim-dark:#1D2740;
+    --mustard:#C9982E;
+    --mustard-dark:#A87A1C;
+    --cream:#F6F3EC;
+    --paper:#FFFDF8;
+    --ink:#2B2825;
+    --ink-soft:#6B665E;
+    --rust:#A8503C;
+    --olive:#6B7C52;
+    --line:#DCD5C6;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Work Sans',sans-serif;}
+  h1,h2,h3,.tag-font{font-family:'Bebas Neue',sans-serif;letter-spacing:0.5px;}
+  a{color:inherit;}
+  button{font-family:'Work Sans',sans-serif;cursor:pointer;}
+  img{max-width:100%;display:block;}
+
+  /* ---------- Header / Hero ---------- */
+  .hero{
+    background:var(--denim);
+    color:#fff;
+    padding:28px 20px 34px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    right:-40px; top:-40px;
+    width:160px;height:160px;
+    border:2px dashed rgba(255,255,255,0.15);
+    border-radius:50%;
+  }
+  .shop-name{font-size:44px;line-height:0.95;margin:0 0 4px;color:#fff;}
+  .shop-sub{font-size:14px;color:var(--mustard);margin:0 0 18px;font-weight:600;}
+  .shop-meta{font-size:13.5px;color:#D8DEEA;line-height:1.7;margin:0 0 18px;max-width:340px;}
+  .shop-meta b{color:#fff;}
+  .whatsapp-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#25D366;color:#fff;
+    padding:11px 18px;border-radius:24px;
+    text-decoration:none;font-weight:600;font-size:14.5px;
+    border:none;
+  }
+  .whatsapp-btn svg{width:18px;height:18px;flex-shrink:0;}
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar{
+    display:flex;gap:8px;overflow-x:auto;
+    padding:14px 16px;background:var(--paper);
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:5;
+  }
+  .filter-chip{
+    flex-shrink:0;
+    border:1.5px solid var(--denim);
+    background:transparent;color:var(--denim);
+    padding:7px 16px;border-radius:20px;font-size:13.5px;font-weight:600;
+  }
+  .filter-chip.active{background:var(--denim);color:#fff;}
+
+  /* ---------- Product grid ---------- */
+  .grid-wrap{padding:18px 14px 40px;}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    max-width:1100px;margin:0 auto;
+  }
+  @media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr);}}
+  @media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr);}}
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+    display:flex;flex-direction:column;
+  }
+  .card-img-wrap{
+    position:relative;
+    aspect-ratio:3/4;
+    background:#EDE8DB;
+    border-bottom:1.5px dashed var(--line);
+    overflow:hidden;
+  }
+  .card-img-wrap img{width:100%;height:100%;object-fit:cover;}
+  .card-img-wrap .no-img{
+    display:flex;align-items:center;justify-content:center;
+    height:100%;color:var(--ink-soft);font-size:12.5px;text-align:center;padding:10px;
+  }
+  .badge{
+    position:absolute;top:8px;left:8px;
+    font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;
+    color:#fff;
+  }
+  .badge.naya{background:var(--olive);}
+  .sold-ribbon{
+    position:absolute;inset:0;
+    background:rgba(43,40,37,0.55);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .sold-ribbon span{
+    background:var(--rust);color:#fff;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;letter-spacing:1px;
+    padding:5px 22px;
+    transform:rotate(-10deg);
+    border-radius:3px;
+  }
+  .card-body{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;flex:1;}
+  .card-name{font-size:14.5px;font-weight:600;margin:0;line-height:1.25;}
+  .card-meta{font-size:12px;color:var(--ink-soft);margin:0;}
+  .card-price{font-family:'Bebas Neue',sans-serif;font-size:21px;color:var(--mustard-dark);margin:2px 0 4px;}
+  .order-btn{
+    margin-top:auto;
+    background:#25D366;color:#fff;border:none;
+    padding:8px 0;border-radius:7px;font-size:13px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .order-btn svg{width:14px;height:14px;}
+  .sold-label-btn{
+    margin-top:auto;
+    background:#E7E1D2;color:var(--ink-soft);border:none;
+    padding:8px 0;border-radius:7px;font-size:13px;font-weight:600;text-align:center;
+  }
+  .admin-controls{display:flex;gap:6px;margin-top:6px;}
+  .admin-controls button{
+    flex:1;font-size:11.5px;padding:6px 0;border-radius:6px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);font-weight:600;
+  }
+  .admin-controls button.danger{color:var(--rust);border-color:var(--rust);}
+  .admin-controls button.toggle-sold{color:var(--olive);border-color:var(--olive);}
+
+  .empty-state{
+    text-align:center;padding:60px 20px;color:var(--ink-soft);
+    max-width:340px;margin:0 auto;
+  }
+  .empty-state h3{font-size:24px;color:var(--ink);margin-bottom:6px;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--denim-dark);color:#CBD2E0;
+    padding:26px 20px 60px;font-size:13px;line-height:1.8;text-align:center;
+  }
+  footer b{color:#fff;}
+  .admin-link{
+    background:none;border:none;color:#8EA0C6;font-size:12px;
+    text-decoration:underline;margin-top:10px;padding:6px;
+  }
+
+  /* ---------- FAB ---------- */
+  .fab{
+    position:fixed;right:16px;bottom:16px;
+    width:48px;height:48px;border-radius:50%;
+    background:var(--mustard);color:#fff;border:none;
+    font-size:20px;box-shadow:0 3px 10px rgba(0,0,0,0.25);
+    z-index:20;
+  }
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(20,18,15,0.55);
+    display:none;align-items:flex-end;justify-content:center;z-index:50;
+  }
+  .overlay.open{display:flex;}
+  @media(min-width:640px){.overlay{align-items:center;}}
+  .modal{
+    background:var(--paper);width:100%;max-width:440px;
+    border-radius:16px 16px 0 0;max-height:88vh;overflow-y:auto;
+    padding:20px 18px 26px;
+  }
+  @media(min-width:640px){.modal{border-radius:14px;}}
+  .modal h2{margin:0 0 14px;font-size:24px;}
+  .modal label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin:12px 0 5px;}
+  .modal input[type=text], .modal input[type=number], .modal select{
+    width:100%;padding:10px 11px;border:1.5px solid var(--line);border-radius:8px;
+    font-size:14.5px;background:#fff;color:var(--ink);font-family:'Work Sans',sans-serif;
+  }
+  .photo-input-wrap{
+    border:1.5px dashed var(--line);border-radius:10px;padding:14px;text-align:center;
+    margin-top:6px;background:#FBF9F3;
+  }
+  .photo-preview{width:100%;max-height:220px;object-fit:contain;border-radius:8px;margin-bottom:8px;}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;}
+  .btn{flex:1;padding:12px 0;border-radius:9px;border:none;font-weight:700;font-size:14.5px;}
+  .btn-primary{background:var(--denim);color:#fff;}
+  .btn-secondary{background:#EDE8DB;color:var(--ink);}
+  .error-text{color:var(--rust);font-size:12.5px;margin-top:6px;display:none;}
+  .close-x{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:var(--ink-soft);}
+  .modal-inner{position:relative;}
+  .admin-status{font-size:12.5px;color:var(--olive);font-weight:600;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1 class="shop-name">EXPORT HUB<br>FOR YOU</h1>
+  <p class="shop-sub">Thrift clothing — shirts, t-shirts &amp; jeans</p>
+  <p class="shop-meta"><b>Address:</b> Laundhora, Roorkee, Aladdin Hotel ke saamne, Pincode 247664<br>
+  <b>Phone:</b> 8958149484</p>
+  <a class="whatsapp-btn" id="mainWhatsapp" href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 3C9 3 3.3 8.7 3.3 15.7c0 2.5.7 4.8 1.9 6.8L3 29l6.7-2.1c1.9 1 4 1.6 6.3 1.6 7 0 12.7-5.7 12.7-12.7S23 3 16 3zm0 23.1c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.2 1.2-3.9-.3-.4c-1.1-1.8-1.7-3.8-1.7-5.9C5.2 9.8 10 5 16 5s10.8 4.8 10.8 10.7S22 26.1 16 26.1zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-2-1.8-2.3-.2-.3 0-.5.1-.6.1-.1.3-.4.5-.6.2-.2.2-.3.3-.5.1-.2 0-.4 0-.6-.1-.2-.7-1.8-1-2.4-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.3 3.1c.2.2 2.2 3.4 5.3 4.7.7.3 1.3.5 1.8.6.7.2 1.4.2 1.9.1.6-.1 1.9-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+    WhatsApp par order karein
+  </a>
+</div>
+
+<div class="filter-bar" id="filterBar"></div>
+
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <h3>Abhi koi item nahi</h3>
+    <p>Naye items jaldi aa rahe hain. Admin panel se item add karein.</p>
+  </div>
+</div>
+
+<footer>
+  <div><b>Export Hub For You</b></div>
+  <div>Laundhora, Roorkee — Aladdin Hotel ke saamne — 247664</div>
+  <div>Call / WhatsApp: 8958149484</div>
+  <button class="admin-link" id="openAdminLink">Store owner? Yahaan login karein</button>
+</footer>
+
+<button class="fab" id="fabBtn" title="Admin" aria-label="Admin panel">+</button>
+
+<!-- Login Modal -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal modal-inner">
+    <button class="close-x" data-close="loginOverlay">&times;</button>
+    <h2>Owner login</h2>
+    <label>Password</label>
+    <input type="text" id="pwInput" inputmode="numeric" placeholder="Password daalein">
+    <p class="error-text" id="pwError">Galat password, dobara try karein.</p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="pwSubmit">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="overlay" id="itemOverlay">
+  <div class="modal modal-inner">
+    <button class="close-x" data-close="itemOverlay">&times;</button>
+    <h2 id="itemModalTitle">Naya item add karein</h2>
+    <label>Photo</label>
+    <div class="photo-input-wrap">
+      <img id="photoPreview" class="photo-preview" style="display:none;">
+      <input type="file" id="photoInput" accept="image/*">
+    </div>
+    <label>Item ka naam</label>
+    <input type="text" id="itemName" placeholder="Jaise: Blue denim jeans">
+    <label>Category</label>
+    <select id="itemCategory">
+      <option value="Shirt">Shirt</option>
+      <option value="T-shirt">T-shirt</option>
+      <option value="Jeans">Jeans</option>
+      <option value="Jacket">Jacket</option>
+      <option value="Other">Other</option>
+    </select>
+    <label>Size</label>
+    <input type="text" id="itemSize" placeholder="Jaise: M, L, 32, Free size">
+    <label>Price (Rs.)</label>
+    <input type="number" id="itemPrice" placeholder="Jaise: 349">
+    <p class="error-text" id="itemError">Naam, photo aur price zaroor bharein.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-close="itemOverlay">Cancel</button>
+      <button class="btn btn-primary" id="itemSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+<script>
+const CONFIG = {
+  whatsappNumber: "918958149484",
+  adminPassword: "8958",
+  shopName: "Export Hub For You"
+};
+
+/* ============================================================
+   YAHAN APNA FIREBASE CONFIG PASTE KAREIN
+   (Firebase Console > Project settings > Your apps > SDK config)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyBOrvEKkn-8xk2M0dTAe0Cho94ospKtPD8",
+  authDomain: "export-hub-3cdb2.firebaseapp.com",
+  projectId: "export-hub-3cdb2",
+  storageBucket: "export-hub-3cdb2.firebasestorage.app",
+  messagingSenderId: "1012090130680",
+  appId: "1:1012090130680:web:95f84bfaab00541d722b0d"
+};
+
+let db = null;
+let firebaseReady = false;
+try{
+  if(firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('PASTE_') === -1){
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    firebaseReady = true;
+  }
+}catch(e){ firebaseReady = false; }
+
+let products = [];
+let isAdmin = false;
+let activeFilter = "All";
+let editingId = null;
+let currentPhotoData = null;
+
+const grid = document.getElementById('grid');
+const emptyState = document.getElementById('emptyState');
+const filterBar = document.getElementById('filterBar');
+const fabBtn = document.getElementById('fabBtn');
+
+document.getElementById('mainWhatsapp').href =
+  "https://wa.me/" + CONFIG.whatsappNumber + "?text=" + encodeURIComponent("Hi! Mujhe Export Hub For You ke kapdon ke baare mein jaankari chahiye.");
+
+function openOverlay(id){ document.getElementById(id).classList.add('open'); }
+function closeOverlay(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('[data-close]').forEach(function(btn){
+  btn.addEventListener('click', function(){ closeOverlay(btn.getAttribute('data-close')); });
+});
+
+document.getElementById('openAdminLink').addEventListener('click', function(){
+  if(isAdmin){ alert('Aap pehle se login hain.'); } else { openOverlay('loginOverlay'); }
+});
+fabBtn.addEventListener('click', function(){
+  if(isAdmin){ openItemModal(null); } else { openOverlay('loginOverlay'); }
+});
+
+document.getElementById('pwSubmit').addEventListener('click', function(){
+  const val = document.getElementById('pwInput').value.trim();
+  const err = document.getElementById('pwError');
+  if(val === CONFIG.adminPassword){
+    isAdmin = true;
+    err.style.display = 'none';
+    document.getElementById('pwInput').value = '';
+    closeOverlay('loginOverlay');
+    fabBtn.textContent = '+';
+    render();
+  } else {
+    err.style.display = 'block';
+  }
+});
+
+function listenProducts(){
+  if(!firebaseReady){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px 16px;color:var(--ink-soft);">' +
+      '<b style="color:var(--ink);">Setup baaki hai:</b><br>Website ke HTML file mein Firebase config paste karein (upar comment mein likha hai kahan).</div>';
+    return;
+  }
+  db.collection('products').onSnapshot(function(snapshot){
+    products = [];
+    snapshot.forEach(function(doc){ products.push(doc.data()); });
+    products.sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+    render();
+  }, function(err){
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--rust);padding:30px 0;">Data load nahi ho paya. Internet check karein.</p>';
+  });
+}
+
+function categories(){
+  const set = new Set(products.map(function(p){ return p.category || 'Other'; }));
+  return ['All'].concat(Array.from(set));
+}
+
+function renderFilters(){
+  const cats = categories();
+  filterBar.innerHTML = '';
+  cats.forEach(function(cat){
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip' + (cat === activeFilter ? ' active' : '');
+    btn.textContent = cat;
+    btn.addEventListener('click', function(){ activeFilter = cat; render(); });
+    filterBar.appendChild(btn);
+  });
+}
+
+function timeSince(ts){
+  if(!ts) return false;
+  return (Date.now() - ts) < (1000*60*60*24*4);
+}
+
+function waLink(p){
+  const msg = "Hi! Mujhe yeh item order karna hai:\n" + p.name + "\nSize: " + (p.size||'-') + "\nPrice: Rs." + p.price;
+  return "https://wa.me/" + CONFIG.whatsappNumber + "?text=" + encodeURIComponent(msg);
+}
+
+function renderProducts(){
+  const list = activeFilter === 'All' ? products : products.filter(function(p){ return (p.category||'Other') === activeFilter; });
+  grid.innerHTML = '';
+  emptyState.style.display = list.length ? 'none' : 'block';
+
+  list.forEach(function(p){
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'card-img-wrap';
+    if(p.image){
+      const img = document.createElement('img');
+      img.src = p.image;
+      imgWrap.appendChild(img);
+    } else {
+      const noImg = document.createElement('div');
+      noImg.className = 'no-img';
+      noImg.textContent = 'Photo nahi hai';
+      imgWrap.appendChild(noImg);
+    }
+    if(!p.sold && timeSince(p.createdAt)){
+      const badge = document.createElement('span');
+      badge.className = 'badge naya';
+      badge.textContent = 'Naya aaya';
+      imgWrap.appendChild(badge);
+    }
+    if(p.sold){
+      const ribbon = document.createElement('div');
+      ribbon.className = 'sold-ribbon';
+      ribbon.innerHTML = '<span>SOLD</span>';
+      imgWrap.appendChild(ribbon);
+    }
+    card.appendChild(imgWrap);
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    body.innerHTML =
+      '<p class="card-name">' + escapeHtml(p.name) + '</p>' +
+      '<p class="card-meta">' + escapeHtml(p.category||'Other') + (p.size ? ' &middot; Size ' + escapeHtml(p.size) : '') + '</p>' +
+      '<p class="card-price">Rs. ' + Number(p.price||0).toLocaleString('en-IN') + '</p>';
+
+    if(p.sold){
+      const soldBtn = document.createElement('div');
+      soldBtn.className = 'sold-label-btn';
+      soldBtn.textContent = 'Yeh item bik chuka hai';
+      body.appendChild(soldBtn);
+    } else {
+      const order = document.createElement('a');
+      order.className = 'order-btn';
+      order.href = waLink(p);
+      order.target = '_blank';
+      order.rel = 'noopener';
+      order.innerHTML = '<svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 3C9 3 3.3 8.7 3.3 15.7c0 2.5.7 4.8 1.9 6.8L3 29l6.7-2.1c1.9 1 4 1.6 6.3 1.6 7 0 12.7-5.7 12.7-12.7S23 3 16 3zm0 23.1c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.2 1.2-3.9-.3-.4c-1.1-1.8-1.7-3.8-1.7-5.9C5.2 9.8 10 5 16 5s10.8 4.8 10.8 10.7S22 26.1 16 26.1zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-2-1.8-2.3-.2-.3 0-.5.1-.6.1-.1.3-.4.5-.6.2-.2.2-.3.3-.5.1-.2 0-.4 0-.6-.1-.2-.7-1.8-1-2.4-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.3 3.1c.2.2 2.2 3.4 5.3 4.7.7.3 1.3.5 1.8.6.7.2 1.4.2 1.9.1.6-.1 1.9-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg> Order karein';
+      body.appendChild(order);
+    }
+
+    if(isAdmin){
+      const controls = document.createElement('div');
+      controls.className = 'admin-controls';
+      controls.innerHTML =
+        '<button data-act="edit">Edit</button>' +
+        '<button data-act="sold" class="toggle-sold">' + (p.sold ? 'Wapas list karein' : 'Bik gaya') + '</button>' +
+        '<button data-act="delete" class="danger">Delete</button>';
+      controls.querySelector('[data-act=edit]').addEventListener('click', function(){ openItemModal(p); });
+      controls.querySelector('[data-act=sold]').addEventListener('click', function(){ toggleSold(p); });
+      controls.querySelector('[data-act=delete]').addEventListener('click', function(){ deleteProduct(p); });
+      body.appendChild(controls);
+    }
+
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+function render(){
+  renderFilters();
+  renderProducts();
+}
+
+function openItemModal(product){
+  editingId = product ? product.id : null;
+  currentPhotoData = product ? product.image : null;
+  document.getElementById('itemModalTitle').textContent = product ? 'Item edit karein' : 'Naya item add karein';
+  document.getElementById('itemName').value = product ? product.name : '';
+  document.getElementById('itemCategory').value = product ? (product.category||'Shirt') : 'Shirt';
+  document.getElementById('itemSize').value = product ? (product.size||'') : '';
+  document.getElementById('itemPrice').value = product ? (product.price||'') : '';
+  document.getElementById('itemError').style.display = 'none';
+  document.getElementById('photoInput').value = '';
+  const preview = document.getElementById('photoPreview');
+  if(currentPhotoData){ preview.src = currentPhotoData; preview.style.display = 'block'; }
+  else { preview.style.display = 'none'; }
+  openOverlay('itemOverlay');
+}
+
+document.getElementById('photoInput').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const preview = document.getElementById('photoPreview');
+  const err = document.getElementById('itemError');
+  err.style.display = 'none';
+  preview.style.display = 'none';
+  compressImage(file).then(function(dataUrl){
+    currentPhotoData = dataUrl;
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+  }).catch(function(){
+    currentPhotoData = null;
+    err.textContent = 'Ye photo load nahi ho payi. Kripya doosri photo try karein (JPEG ya PNG).';
+    err.style.display = 'block';
+  });
+});
+
+function isHeic(file){
+  const name = (file.name || '').toLowerCase();
+  const type = (file.type || '').toLowerCase();
+  return type.indexOf('heic') !== -1 || type.indexOf('heif') !== -1 ||
+    name.endsWith('.heic') || name.endsWith('.heif');
+}
+
+function compressImage(file){
+  return new Promise(function(resolve, reject){
+    const startWith = function(sourceBlob){
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const img = new Image();
+        img.onload = function(){
+          const maxW = 800;
+          let w = img.width, h = img.height;
+          if(w > maxW){ h = Math.round(h * (maxW / w)); w = maxW; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.65));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(sourceBlob);
+    };
+
+    if(isHeic(file) && typeof heic2any === 'function'){
+      heic2any({ blob: file, toType: 'image/jpeg', quality: 0.7 }).then(function(result){
+        const blob = Array.isArray(result) ? result[0] : result;
+        startWith(blob);
+      }).catch(reject);
+    } else {
+      startWith(file);
+    }
+  });
+}
+
+document.getElementById('itemSave').addEventListener('click', async function(){
+  const name = document.getElementById('itemName').value.trim();
+  const category = document.getElementById('itemCategory').value;
+  const size = document.getElementById('itemSize').value.trim();
+  const price = document.getElementById('itemPrice').value;
+  const err = document.getElementById('itemError');
+
+  if(!name || !price || !currentPhotoData){
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+
+  const btn = document.getElementById('itemSave');
+  btn.disabled = true;
+  btn.textContent = 'Save ho raha hai...';
+
+  try{
+    if(editingId){
+      const existing = products.find(function(p){ return p.id === editingId; });
+      const updated = Object.assign({}, existing, {
+        name: name, category: category, size: size, price: Number(price), image: currentPhotoData
+      });
+      await db.collection('products').doc(editingId).set(updated);
+    } else {
+      const id = 'p' + Date.now();
+      const data = {
+        id: id, name: name, category: category, size: size,
+        price: Number(price), image: currentPhotoData, sold: false, createdAt: Date.now()
+      };
+      await db.collection('products').doc(id).set(data);
+    }
+    closeOverlay('itemOverlay');
+  }catch(e){
+    alert('Kuch gadbad hui, dobara try karein. (' + (e && e.message ? e.message : 'error') + ')');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Save';
+});
+
+async function toggleSold(p){
+  const updated = Object.assign({}, p, { sold: !p.sold });
+  await db.collection('products').doc(p.id).set(updated);
+}
+
+async function deleteProduct(p){
+  if(!confirm('Kya aap "' + p.name + '" ko hamesha ke liye delete karna chahte hain?')) return;
+  await db.collection('products').doc(p.id).delete();
+}
+
+function init(){
+  grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:30px 0;">Loading...</p>';
+  listenProducts();
+}
+init();
+</script>
+
+</body>
+</html>
